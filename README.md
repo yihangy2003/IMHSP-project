@@ -72,7 +72,3 @@ mvn spring-boot:run
 ## 贡献者
 
 - [yeaheee](https://github.com/yeaheee)
-
-## 许可证
-
-本项目采用MIT许可证。
