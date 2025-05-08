@@ -1,0 +1,66 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Frontend ignores
+IMHSP-project-frontend/node_modules/
+IMHSP-project-frontend/dist/
+IMHSP-project-frontend/dist-ssr/
+IMHSP-project-frontend/*.local
+IMHSP-project-frontend/logs/
+IMHSP-project-frontend/*.log
+IMHSP-project-frontend/npm-debug.log*
+IMHSP-project-frontend/yarn-debug.log*
+IMHSP-project-frontend/yarn-error.log*
+IMHSP-project-frontend/pnpm-debug.log*
+IMHSP-project-frontend/lerna-debug.log*
+
+# Backend ignores
+IMHSP-project-backend/target/
+IMHSP-project-backend/out/
+IMHSP-project-backend/**/target/
+IMHSP-project-backend/**/*.class
+IMHSP-project-backend/**/*.log
+IMHSP-project-backend/.idea/
+IMHSP-project-backend/*.iws
+IMHSP-project-backend/*.iml
+IMHSP-project-backend/*.ipr
+
+# IDE settings
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Zip files
+*.zip
+
+# 保留前端和后端文件夹
+!IMHSP-project-frontend/
+!IMHSP-project-backend/
