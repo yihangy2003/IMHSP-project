@@ -1,0 +1,8 @@
+dist
+node_modules
+.vscode
+.idea
+*.log
+*.svg
+*.ico
+package-lock.json 

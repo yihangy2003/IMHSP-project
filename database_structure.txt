@@ -1,0 +1,169 @@
+# IMHS Platform 数据库结构
+
+## 用户表 (users)
+- id: bigint, primary key, auto_increment                # 用户唯一标识
+- username: varchar(50), not null, unique                # 用户名，不可重复
+- password: varchar(255), not null                       # 密码，加密存储
+- email: varchar(100), unique                           # 邮箱
+- phone: varchar(20)                                    # 手机号
+- gender: enum('male', 'female')                        # 性别，默认为 男
+- location: varchar(100)                                # 所在地
+- bio: text                                            # 个人简介
+- avatar: varchar(255)                                  # 头像URL
+- roles: enum('explorer', 'counselor', 'admin')         # 用户角色：探索者/咨询师/管理员
+- visit_count: int, default 0                           # 主页访问量
+- followers_count: int, default 0                       # 粉丝数
+- following_count: int, default 0                       # 关注数
+- created_at: timestamp                                 # 注册时间
+- updated_at: timestamp                                 # 信息更新时间
+- is_qualified: boolean, default false                  # 咨询师资格认证状态
+- specialties: json                                     # 咨询师专业领域，JSON数组
+- experience: int                                       # 咨询师从业年限
+- price: decimal(10,2)                                  # 咨询价格/次
+- is_free: boolean                                      # 是否提供免费咨询
+- available: boolean                                    # 是否接受预约
+
+## 隐私设置表 (privacy_settings)
+- id: bigint, primary key, auto_increment
+- user_id: bigint, foreign key(users.id)                # 关联用户ID
+- email_public: boolean, default false                  # 邮箱是否公开
+- phone_public: boolean, default false                  # 手机号是否公开
+- gender_public: boolean, default false                 # 性别是否公开
+- location_public: boolean, default false               # 位置是否公开
+- bio_public: boolean, default false                    # 简介是否公开
+- activities_public: boolean, default false             # 动态列表是否公开
+- follow_list_public: boolean, default false            # 关注列表是否公开
+- follower_list_public: boolean, default false          # 粉丝列表是否公开
+- notifications_public: boolean, default false          # 通知列表是否公开
+- test_history_public: boolean, default false           # 测验记录是否公开
+- created_at: timestamp                                 # 创建时间
+- updated_at: timestamp                                 # 信息更新时间
+
+## 动态表 (activities)
+- id: bigint, primary key, auto_increment
+- user_id: bigint, foreign key(users.id)              # 用户ID
+- type: enum('post', 'topic', 'comment', 'like', 'dislike', 'star', 'test') # 动态类型
+- target_type: enum('post', 'topic', 'comment')       # 目标内容类型
+- target_id: bigint                                   # 目标内容ID
+- created_at: timestamp                               # 创建时间
+
+## 关注表 (follows)
+- id: bigint, primary key, auto_increment
+- follower_id: bigint, foreign key(users.id)           # 关注者ID
+- following_id: bigint, foreign key(users.id)          # 被关注者ID
+- created_at: timestamp                                # 关注时间
+
+## 通知表 (notifications)
+- id: bigint, primary key, auto_increment
+- user_id: bigint, foreign key(users.id)              # 接收通知的用户ID
+- type: enum('comment', 'like', 'star', 'follow', 'dislike')     # 通知类型
+- sender_id: bigint, foreign key(users.id)            # 触发通知的用户ID
+- target_type: enum('post', 'topic', 'comment')       # 相关内容类型
+- target_id: bigint                                   # 相关内容ID
+- is_read: boolean, default false                     # 是否已读
+- created_at: timestamp                               # 通知时间
+
+## 预约表 (appointments)
+- id: bigint, primary key, auto_increment
+- user_id: bigint, foreign key(users.id)              # 预约用户ID
+- counselor_id: bigint, foreign key(users.id)         # 咨询师ID
+- date: date                                          # 预约日期
+- time_slot: varchar(20)                              # 时间段(如"09:00-10:00")
+- is_read: boolean, default false                     # 是否已读
+- status: enum('waiting', 'ongoing', 'cancelled', 'completed', 'reviewed')  # 预约状态：待进行/进行中/已取消/已完成/已评价
+- created_at: timestamp                               # 预约创建时间
+- updated_at: timestamp                               # 状态更新时间
+
+## 咨询评价表 (reviews)
+- id: bigint, primary key, auto_increment
+- appointment_id: bigint, foreign key(appointments.id) # 关联的预约ID
+- user_id: bigint, foreign key(users.id)              # 评价用户ID
+- counselor_id: bigint, foreign key(users.id)         # 被评价的咨询师ID
+- type: enum('good', 'bad')                          # 评价类型：好评/差评
+- content: text                                       # 评价内容
+- is_anonymous: boolean, default false                # 是否匿名评价
+- created_at: timestamp                               # 评价时间
+
+## 咨询评价点赞表 (review_likes)
+- id: bigint, primary key, auto_increment  
+- type: enum('like', 'dislike')                  # 点赞类型：点赞/点踩
+- user_id: bigint, foreign key(users.id)              # 点赞用户ID
+- review_id: bigint, foreign key(reviews.id)          # 评价ID
+- created_at: timestamp                               # 点赞时间
+
+## 心理测验表 (tests)
+- id: bigint, primary key, auto_increment
+- name: varchar(100)                                  # 测验名称
+- description: text                                   # 测验说明
+- count: int                                       # 测验题目数量
+- questions: json                                     # 题目内容，JSON格式
+- created_at: timestamp                               # 创建时间
+- updated_at: timestamp                               # 更新时间
+
+## 测验记录表 (test_records)
+- id: bigint, primary key, auto_increment
+- user_id: bigint, foreign key(users.id)              # 测验用户ID
+- test_id: bigint, foreign key(tests.id)              # 测验ID
+- answers: json                                       # 答案记录，JSON格式
+- score: int                                          # 测验得分
+- result: text                                        # 测验结果
+- created_at: timestamp                               # 完成时间
+
+## 专题表 (topics)
+- id: bigint, primary key, auto_increment
+- title: varchar(100), not null                        # 专题标题
+- introduction: text                                   # 专题简介
+- content: text                                        # 专题内容(Markdown)
+- cover: varchar(255)                                  # 封面图片URL
+- type: enum('free', 'paid')                          # 专题类型：免费/付费
+- price: decimal(10,2)                                # 付费专题价格
+- author_id: bigint, foreign key(users.id)            # 作者ID，必须是咨询师
+- views: int, default 0                               # 浏览量
+- likes: int, default 0                               # 点赞数
+- collects: int, default 0                            # 收藏数
+- created_at: timestamp                               # 创建时间
+- updated_at: timestamp                               # 更新时间
+
+## 帖子表 (posts)
+- id: bigint, primary key, auto_increment
+- title: varchar(100), not null                        # 帖子标题
+- content: text                                       # 帖子内容(Markdown)
+- author_id: bigint, foreign key(users.id)            # 作者ID
+- views: int, default 0                               # 浏览量
+- likes: int, default 0                               # 点赞数
+- collects: int, default 0                            # 收藏数
+- created_at: timestamp                               # 发布时间
+- updated_at: timestamp                               # 更新时间
+
+## 评论表 (comments)
+- id: bigint, primary key, auto_increment
+- content: text, not null                            # 评论内容
+- author_id: bigint, foreign key(users.id)            # 评论者ID
+- target_type: enum('post', 'topic')                  # 评论目标类型
+- target_id: bigint                                   # 目标ID(post.id或topic.id)
+- likes: int, default 0                               # 点赞数
+- dislikes: int, default 0                            # 踩数
+- created_at: timestamp                               # 评论时间
+
+## 点赞表 (likes)
+- id: bigint, primary key, auto_increment
+- type: enum('like', 'dislike')                  # 点赞类型：点赞/点踩
+- user_id: bigint, foreign key(users.id)              # 点赞用户ID
+- target_type: enum('post', 'topic', 'comment')       # 点赞目标类型
+- target_id: bigint                                   # 目标ID
+- created_at: timestamp                               # 点赞时间
+
+## 收藏表 (collections)
+- id: bigint, primary key, auto_increment
+- user_id: bigint, foreign key(users.id)              # 收藏用户ID
+- target_type: enum('post', 'topic')                  # 收藏目标类型
+- target_id: bigint                                   # 目标ID
+- created_at: timestamp                               # 收藏时间
+
+## 聊天记录表 (messages)
+- id: bigint, primary key, auto_increment
+- sender_id: bigint, foreign key(users.id)            # 发送者ID
+- receiver_id: bigint, foreign key(users.id)          # 接收者ID
+- content: text                                       # 消息内容
+- is_read: boolean, default false                     # 是否已读
+- created_at: timestamp                               # 发送时间

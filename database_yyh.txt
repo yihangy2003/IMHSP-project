@@ -1,0 +1,23 @@
+# IMHS Platform 数据库结构
+
+user    # 用户表
+- id
+- username
+- password
+- email
+- phone
+- gender
+- location
+- introduction
+- avatar
+- role
+- visit_count
+- created_time
+- updated_time
+- experience    # 从业时间
+- price     # 服务价格
+- is_free   # 是否提供免费咨询
+- available     # 当前是否接受预约
+
+
+- specialties   # 专业领域标签（联外表）

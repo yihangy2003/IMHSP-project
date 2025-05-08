@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: imhsp-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      routes:
+        - id: auth_route
+          uri: lb://imhsp-auth
+          predicates:
+            - Path=/auth/**
+        - id: user_route
+          uri: lb://imhsp-user
+          predicates:
+            - Path=/user/**
+      discovery:
+        locator:
+          enabled: true 
